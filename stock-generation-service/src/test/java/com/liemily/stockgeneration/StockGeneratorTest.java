@@ -1,6 +1,7 @@
 package com.liemily.stockgeneration;
 
 import com.liemily.stock.Stock;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,10 +31,15 @@ public class StockGeneratorTest {
     private int maxVol;
 
     private String stockSymbol = "SYM";
+    private Stock generatedStock;
+
+    @Before
+    public void setup() {
+        generatedStock = stockGenerator.generateStock(stockSymbol);
+    }
 
     @Test
     public void testGenerateStockValue() {
-        Stock generatedStock = stockGenerator.generateStock(stockSymbol);
         double generatedStockValue = generatedStock.getValue().doubleValue();
 
         assertTrue(generatedStockValue >= minValue);
@@ -42,7 +48,6 @@ public class StockGeneratorTest {
 
     @Test
     public void testGeneratedStockValueChanges() {
-        Stock generatedStock = stockGenerator.generateStock(stockSymbol);
         Stock newGeneratedStock = stockGenerator.generateStock(stockSymbol);
 
         assertNotEquals(generatedStock.getValue(), newGeneratedStock.getValue());
@@ -50,7 +55,6 @@ public class StockGeneratorTest {
 
     @Test
     public void testGenerateStockVolume() {
-        Stock generatedStock = stockGenerator.generateStock(stockSymbol);
         int generatedStockValue = generatedStock.getVolume();
 
         assertTrue(generatedStockValue >= minVol);
@@ -59,9 +63,24 @@ public class StockGeneratorTest {
 
     @Test
     public void testGeneratedStockVolumeChanges() {
-        Stock generatedStock = stockGenerator.generateStock(stockSymbol);
         Stock newGeneratedStock = stockGenerator.generateStock(stockSymbol);
 
         assertNotEquals(generatedStock.getVolume(), newGeneratedStock.getVolume());
+    }
+
+
+    @Test
+    public void testValueModulation() {
+        double initialValue = generatedStock.getValue().doubleValue();
+        double modulatedValue = stockGenerator.modulateValue(initialValue);
+        assertNotEquals(modulatedValue, initialValue);
+    }
+
+    @Test
+    public void testValueModulationRandomised() {
+        double initialValue = generatedStock.getValue().doubleValue();
+        double modulatedValue1 = stockGenerator.modulateValue(initialValue);
+        double modulatedValue2 = stockGenerator.modulateValue(initialValue);
+        assertNotEquals(modulatedValue1, modulatedValue2);
     }
 }

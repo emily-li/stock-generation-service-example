@@ -19,22 +19,36 @@ public class StockGenerator {
     private double maxValue;
     private int minVol;
     private int maxVol;
+    private double scaleFactorMin;
+    private double scaleFactorMax;
 
     @Autowired
     public StockGenerator(@Value("${stockupdater.generator.value.min}") double minValue,
                           @Value("${stockupdater.generator.value.max}") double maxValue,
                           @Value("${stockupdater.generator.vol.min}") int minVol,
-                          @Value("${stockupdater.generator.vol.max}") int maxVol) {
+                          @Value("${stockupdater.generator.vol.max}") int maxVol,
+                          @Value("${stockupdater.modulation.scalefactor.min}") double scaleFactorMin,
+                          @Value("${stockupdater.modulation.scalefactor.max}") double scaleFactorMax) {
         this.minValue = minValue;
         this.maxValue = maxValue;
         this.minVol = minVol;
         this.maxVol = maxVol;
+        this.scaleFactorMin = scaleFactorMin;
+        this.scaleFactorMax = scaleFactorMax;
     }
 
     Stock generateStock(String stockSymbol) {
         double value = generateValue(minValue, maxValue);
         int volume = generateVolume(minVol, maxVol);
         return new Stock(stockSymbol, BigDecimal.valueOf(value), volume);
+    }
+
+    double modulateValue(double initialValue) {
+        return initialValue * scaleFactor();
+    }
+
+    private double scaleFactor() {
+        return ThreadLocalRandom.current().nextDouble(scaleFactorMin, scaleFactorMax);
     }
 
     private double generateValue(double min, double max) {
