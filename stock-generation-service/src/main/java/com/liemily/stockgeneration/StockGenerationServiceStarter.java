@@ -7,8 +7,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Created by Emily Li on 20/08/2017.
  */
 @SpringBootApplication
-public class StocksGenerationServiceStarter {
+public class StockGenerationServiceStarter {
     public static void main(String[] args) {
-        SpringApplication.run(StocksGenerationServiceStarter.class, args);
+        SpringApplication.run(StockGenerationServiceStarter.class, args);
     }
 }
