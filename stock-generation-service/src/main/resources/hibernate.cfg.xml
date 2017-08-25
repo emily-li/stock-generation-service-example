@@ -6,7 +6,7 @@
 <hibernate-configuration>
     <session-factory>
         <!-- Database connection settings -->
-        <property name="connection.url">jdbc:mysql://localhost/database-access-example</property>
+        <property name="connection.url">jdbc:mysql://localhost/stock-generation-service-example</property>
         <property name="connection.username">root</property>
         <property name="connection.password">password</property>
         <property name="hibernate.current_session_context_class">
