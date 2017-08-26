@@ -5,6 +5,7 @@ import com.liemily.stock.Stock;
 import com.liemily.stockgeneration.exceptions.StockModulationException;
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -26,6 +27,7 @@ public class HibernateStockGenerationService implements StockGenerationService {
     private StockGenerator stockGenerator;
     private int rateMs;
 
+    @Autowired
     public HibernateStockGenerationService(HibernateDAL hibernateDAL,
                                            ScheduledExecutorService scheduledExecutorService,
                                            StockGenerator stockGenerator,
