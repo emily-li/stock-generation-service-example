@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
-import javax.transaction.Transactional;
 import java.lang.invoke.MethodHandles;
 import java.util.List;
 
@@ -33,9 +32,8 @@ public class HibernateDAL {
         sessionFactory.openSession();
     }
 
-    @Transactional
     public List query(String query) throws InterruptedException {
-        try (Session session = sessionFactory.getCurrentSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             List result = session.createQuery(query).list();
             session.getTransaction().commit();
@@ -51,9 +49,8 @@ public class HibernateDAL {
         }
     }
 
-    @Transactional
     public void execute(String query) throws InterruptedException {
-        try (Session session = sessionFactory.getCurrentSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             session.createQuery(query).executeUpdate();
             session.getTransaction().commit();
@@ -66,24 +63,23 @@ public class HibernateDAL {
         }
     }
 
-    @Transactional
     public void save(Object object) throws InterruptedException {
-        try (Session session = sessionFactory.getCurrentSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
-            session.save(object);
+            session.saveOrUpdate(object);
             session.getTransaction().commit();
         } catch (HibernateException e) {
             if (e.getMessage().contains("no connection is currently available")) {
                 waitForConnection();
             } else {
+                logger.error("Encountered exception when attempting to save object " + object.getClass().getSimpleName(), e);
                 throw e;
             }
         }
     }
 
-    @Transactional
     public void delete(String entity, String id) throws InterruptedException {
-        try (Session session = sessionFactory.getCurrentSession()) {
+        try (Session session = sessionFactory.openSession()) {
             session.beginTransaction();
             Object objectToDelete = session.load(entity, id);
             session.delete(objectToDelete);
@@ -97,7 +93,7 @@ public class HibernateDAL {
         }
     }
 
-    protected void waitForConnection() throws InterruptedException {
+    private void waitForConnection() throws InterruptedException {
         final long WAIT_MS = 250;
         logger.warn("No connection available in the connection pool. Sleeping " + WAIT_MS + "ms");
         Thread.sleep(WAIT_MS);
