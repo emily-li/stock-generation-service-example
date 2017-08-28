@@ -55,8 +55,8 @@ public class HibernateStockGenerationService implements StockGenerationService {
             for (Stock stock : stocks) {
                 double newValue = stockGenerator.modulateValue(stock.getValue().doubleValue());
                 stock.setValue(BigDecimal.valueOf(newValue));
+                hibernateDAL.save(stock);
             }
-            hibernateDAL.save(stocks);
         } catch (InterruptedException e) {
             String msg = "Failed to modulate stocks";
             logger.info(msg, e);
